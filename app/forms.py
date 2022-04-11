@@ -8,7 +8,7 @@ from wtforms.fields.html5 import EmailField
 class LoginForm(FlaskForm):
     #Feilds for login form
     username = StringField('Username', validators=[InputRequired()])
-    password = PasswordField('Password', [validators.DataRequired(), validators.Email()])
+    password = PasswordField('Password', [validators.DataRequired()])
 
 class RegistrationForm(FlaskForm):
     #Feilds for registration form
