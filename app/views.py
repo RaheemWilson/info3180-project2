@@ -5,8 +5,14 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
-from app import app
+from datetime import datetime
+
+from click import password_option
+from app import app, db
 from flask import render_template, request, jsonify, send_file
+from app.forms import *
+from app.models import *
+from werkzeug.utils import secure_filename
 import os
 
 
@@ -18,6 +24,41 @@ import os
 def index():
     return jsonify(message="This is the beginning of our API")
 
+###
+# Routing for your application.
+###
+
+@app.route('/api/register', methods = ['POST'])
+def register():
+    form = RegistrationForm()
+    if request.method == "POST" and form.validate_on_submit():
+        id = Users.query.filter_by(id = id).first()
+        username = form.username.data
+        password = form.password.data
+        fullname =  form.fullname.data
+        email = form.email.data
+        location = form.location.data
+        biography = form.biography.data
+        upload = form.photo.data
+        filename = secure_filename(upload.filename)
+        date_joined = datetime.now()
+        
+        user = Users (username, password, fullname, email, location, biography, filename, date_joined)
+        db.session.add(user)
+        db.session.commit()
+        upload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        
+        return jsonify({
+                "id": id,
+                "name": fullname,
+                "photo": upload,
+                "email": email,
+                "location": location,
+                "biography": biography,
+                "date_joined": date_joined
+                
+            })
+    return jsonify(errors=form_errors(form))
 
 ###
 # The functions below should be applicable to all Flask apps.
