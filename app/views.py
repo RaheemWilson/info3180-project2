@@ -5,8 +5,12 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
-from app import app
-from flask import render_template, request, jsonify, send_file
+from app import app, db, login_manager
+from flask import request, jsonify, send_file, session
+from flask_login import login_user, logout_user, current_user, login_required
+from app.forms import LoginForm
+from app.models import Users
+from werkzeug.security import check_password_hash
 import os
 
 
@@ -17,7 +21,6 @@ import os
 @app.route('/')
 def index():
     return jsonify(message="This is the beginning of our API")
-
 
 ###
 # The functions below should be applicable to all Flask apps.
