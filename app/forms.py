@@ -18,7 +18,8 @@ class RegistrationForm(FlaskForm):
     email = EmailField('Email', [validators.InputRequired(), validators.Email()])
     location = StringField('Location', validators=[InputRequired()])
     biography = TextAreaField('Biography', validators=[DataRequired()])
-    upload_photo = FileField('UploadPhoto', validators=[FileRequired(), FileAllowed(['jpg','png'])])
+    photo = FileField('UploadPhoto', validators=[FileRequired(), FileAllowed(['jpg','png'])])
+
 
 
     
