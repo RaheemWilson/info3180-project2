@@ -20,5 +20,4 @@ class RegistrationForm(FlaskForm):
     biography = TextAreaField('Biography', validators=[InputRequired()])
     photo = FileField('UploadPhoto', validators=[FileRequired(), FileAllowed(['jpg','png'])])
 
-
     
