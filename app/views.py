@@ -25,7 +25,8 @@ def requires_auth(f):
   @wraps(f)
   def decorated(*args, **kwargs):
     auth = request.headers.get('Authorization', None) # or request.cookies.get('token', None) 
-
+    
+    # If statements check if token exist or if it has been compromised
     if not auth:
       return jsonify({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}), 401
 
@@ -118,13 +119,15 @@ def login():
             payload = {
                 'sub': user.id, # subject, usually a unique identifier
                 'user': form.username.data,
-                'expiration': str(datetime.utcnow() + timedelta(minutes=2)) # expiration time
+                'iat': datetime.utcnow(),# issued at time
+                'expiration': datetime.utcnow() + timedelta(minutes=2) # expiration time
             }
             token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
 
-            return jsonify(error=None, data={'token':token}, message="Token Generated")
+            #i guess this returns the token by using jwt.decode \-(^-^)-/ 
+            return jsonify(error=None, data={'token':jwt.decode(token,  app.config['SECRET_KEY'], algorithms=["HS256"])} , message="Token Generated")
         else:
-            return make_response('Unable to verify',403,{'WWW-Authenticate': 'Basic realm:"Authentication Failed!"'})
+            return make_response('Unable to verify', 403, {'WWW-Authenticate': 'Basic realm:"Authentication Failed!"'})
 
 
 
