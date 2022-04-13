@@ -22,8 +22,8 @@ class RegistrationForm(FlaskForm):
 
 class ExploreForm(FlaskForm):
     #Fiellds for explore form
-    make = StringField('Make', validators=[InputRequired()])
-    model = IntegerField('Model', validators=[DataRequired()])
+    make_ex = StringField('Make', validators=[InputRequired()])
+    model_ex = IntegerField('Model', validators=[DataRequired()])
 
 class AddNewCarForm(FlaskForm):
     #Fields for add new car form
