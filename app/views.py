@@ -6,15 +6,53 @@ This file creates your application.
 """
 
 from app import app, db, login_manager
-from datetime import datetime
 from click import password_option
-from flask import request, jsonify, send_file, session, render_template
-from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm, RegistrationForm
-from app.models import Users
+from flask import request, jsonify, send_file, session, render_template, make_response
+from app.forms import LoginForm, RegistrationForm, ExploreForm, AddNewCarForm
+from app.models import Users, Cars, Favourites
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
+from datetime import datetime, timedelta
+from functools import wraps
 import os
+import jwt
+
+
+# Creates a JWT @requires_auth decorator
+# This decorator can be used to denote that a specific route should check
+# for a valid JWT token before displaying the contents of that route.
+def requires_auth(f):
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    auth = request.headers.get('Authorization', None) # or request.cookies.get('token', None) 
+
+    if not auth:
+      return jsonify({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}), 401
+
+    parts = auth.split()
+
+    if parts[0].lower() != 'bearer':
+      return jsonify({'code': 'invalid_header', 'description': 'Authorization header must start with Bearer'}), 401
+    elif len(parts) == 1:
+      return jsonify({'code': 'invalid_header', 'description': 'Token not found'}), 401
+    elif len(parts) > 2:
+      return jsonify({'code': 'invalid_header', 'description': 'Authorization header must be Bearer + \s + token'}), 401
+
+    token = parts[1]
+    try:
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({'code': 'token_expired', 'description': 'token is expired'}), 401
+    except jwt.DecodeError:
+        return jsonify({'code': 'token_invalid_signature', 'description': 'Token signature is invalid'}), 401
+
+    g.current_user = user = payload
+    return f(*args, **kwargs)
+
+  return decorated
+
+
 
 
 ###
@@ -56,6 +94,43 @@ def register():
                 
             })
     return jsonify(errors=form_errors(form))
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def login():
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        # Get the username and password values from the form.
+        username = form.username.data
+        password = form.password.data
+
+        # This queries database for a user based on the username
+        # and password submitted.
+        user = Users.query.filter_by(username=username).first()
+
+        # Compares the submited password and username to the hash password and
+        # username in the database.
+        if user is not None and check_password_hash(user.password, password):
+            session['logged_in'] = True
+
+            #Creates the token for the user currently logging in
+            payload = {
+                'sub': user.id, # subject, usually a unique identifier
+                'user': form.username.data,
+                'expiration': str(datetime.utcnow() + timedelta(minutes=2)) # expiration time
+            }
+            token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+
+            return jsonify(error=None, data={'token':token}, message="Token Generated")
+        else:
+            return make_response('Unable to verify',403,{'WWW-Authenticate': 'Basic realm:"Authentication Failed!"'})
+
+
+
+
+
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###
