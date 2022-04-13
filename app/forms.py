@@ -1,29 +1,30 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, IntegerField
-from wtforms.validators import InputRequired
-from wtforms import validators
+from wtforms import StringField, PasswordField, TextAreaField, IntegerField, EmailField
+from wtforms.validators import InputRequired, Email
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms.fields.html5 import EmailField
+
+
 
 class LoginForm(FlaskForm):
     #Fields for login form
     username = StringField('Username', validators=[InputRequired()])
-    password = PasswordField('Password', [validators.InputRequired()])
+    password = PasswordField('Password', validators=[InputRequired()])
 
 class RegistrationForm(FlaskForm):
     #Fields for registration form
     username = StringField('Username', validators=[InputRequired()])
-    password = PasswordField('Password', [validators.InputRequired()])
+    password = PasswordField('Password', validators=[InputRequired()])
     fullname = StringField('Fullname', validators=[InputRequired()])
-    email = EmailField('Email', [validators.InputRequired(), validators.Email()])
+    email = EmailField('Email', validators=[InputRequired()])
     location = StringField('Location', validators=[InputRequired()])
     biography = TextAreaField('Biography', validators=[InputRequired()])
     photo = FileField('UploadPhoto', validators=[FileRequired(), FileAllowed(['jpg','png'])])
 
 class ExploreForm(FlaskForm):
     #Fiellds for explore form
+    #_ex indicates an explore field
     make_ex = StringField('Make', validators=[InputRequired()])
-    model_ex = IntegerField('Model', validators=[DataRequired()])
+    model_ex = IntegerField('Model', validators=[InputRequired()])
 
 class AddNewCarForm(FlaskForm):
     #Fields for add new car form
@@ -36,4 +37,4 @@ class AddNewCarForm(FlaskForm):
     transmission = StringField('Transmission', validators=[InputRequired()])
     description =  TextAreaField('Description', validators=[InputRequired()])
     photo = FileField('UploadPhoto', validators=[FileRequired(), FileAllowed(['jpg','png'])])
-    
+     
