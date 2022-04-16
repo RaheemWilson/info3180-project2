@@ -5,11 +5,13 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
+from tabnanny import check
 from app import app, db, login_manager
 from click import password_option
 from flask import request, jsonify, send_file, session, render_template, make_response
 from app.forms import LoginForm, RegistrationForm, ExploreForm, AddNewCarForm
 from app.models import Users, Cars, Favourites
+from flask_wtf.csrf import generate_csrf
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
@@ -66,42 +68,52 @@ def index():
 
 @app.route('/api/register', methods = ['POST'])
 def register():
-    form = RegistrationForm()
-    if request.method == "POST" and form.validate_on_submit():
-        id = Users.query.filter_by(id = id).first()
-        username = form.username.data
-        password = form.password.data
-        fullname =  form.fullname.data
-        email = form.email.data
-        location = form.location.data
-        biography = form.biography.data
-        upload = form.photo.data
-        filename = secure_filename(upload.filename)
-        date_joined = datetime.now()
-        
-        user = Users (username, password, fullname, email, location, biography, filename, date_joined)
-        db.session.add(user)
-        db.session.commit()
-        upload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        
-        return jsonify({
-                "id": id,
-                "name": fullname,
-                "photo": upload,
-                "email": email,
-                "location": location,
-                "biography": biography,
-                "date_joined": date_joined
-                
-            })
-    return jsonify(errors=form_errors(form))
+    try:
+        form = RegistrationForm()
+        if request.method == "POST" and form.validate_on_submit():
+            
+            check_username = Users.query.filter_by(username=form.username.data).first()
+            check_email = Users.query.filter_by(email=form.email.data).first()
+            
+            if check_username is not None or check_email is not None:
+                return jsonify({"errors": "User is in the system"}), 401
+
+
+            username = form.username.data
+            password = form.password.data
+            fullname =  form.fullname.data
+            email = form.email.data
+            location = form.location.data
+            biography = form.biography.data
+            upload = form.photo.data
+            filename = secure_filename(upload.filename)
+            date_joined = datetime.now()
+            
+            user = Users(username, password, fullname, email, location, biography, filename, date_joined)
+            db.session.add(user)
+            db.session.commit()
+            upload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            
+            return jsonify({
+                'id': user.id,
+                'username': username,
+                'name': fullname,
+                'photo': filename,
+                'email': email,
+                'location': location,
+                'biography': biography,
+                'date_joined': user.date_joined
+            }), 201
+        return jsonify(errors=form_errors(form)), 401
+    except:
+        return jsonify({ "errors": form.errors}), 500
 
 
 @app.route("/api/auth/login", methods=["POST"])
 def login():
     form = LoginForm()
 
-    if form.validate_on_submit():
+    if request.method == "POST" and form.validate_on_submit():
         # Get the username and password values from the form.
         username = form.username.data
         password = form.password.data
@@ -118,19 +130,25 @@ def login():
             #Creates the token for the user currently logging in
             payload = {
                 'sub': user.id, # subject, usually a unique identifier
-                'user': form.username.data,
+                'user': username,
                 'iat': datetime.utcnow(),# issued at time
-                'expiration': datetime.utcnow() + timedelta(minutes=2) # expiration time
+                'exp': datetime.utcnow() + timedelta(hours=2) # expiration time
             }
             token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
 
-            #i guess this returns the token by using jwt.decode \-(^-^)-/ 
-            return jsonify(error=None, data={'token':jwt.decode(token,  app.config['SECRET_KEY'], algorithms=["HS256"])} , message="Token Generated")
-        else:
-            return make_response('Unable to verify', 403, {'WWW-Authenticate': 'Basic realm:"Authentication Failed!"'})
+            return jsonify(
+                { 
+                    "token": token , 
+                    "message": "Login Successfully",
+                    "id": user.id
+                }), 200
+    
+    return jsonify(errors=form_errors(form)), 401
 
 
-
+@app.route('/api/csrf-token', methods=['GET'])
+def get_csrf():
+    return jsonify({'csrf_token': generate_csrf()})
 
 ###
 # The functions below should be applicable to all Flask apps.
