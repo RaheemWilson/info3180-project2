@@ -43,7 +43,8 @@ export default {
                 this.error = true
             } else {
                 store.commit('setAuth', { auth: res.token })
-                store.commit('setUser', { auth: res.id })
+                store.commit('setUser', { user: res.id })
+                
                 localStorage.setItem('authToken', res.token)
                 localStorage.setItem('id', res.id)
                 this.$router.push("/explore")

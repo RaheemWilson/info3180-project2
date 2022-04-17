@@ -38,7 +38,9 @@ def register():
             check_email = Users.query.filter_by(email=form.email.data).first()
             
             if check_username is not None or check_email is not None:
-                return jsonify({"errors": "User is in the system"}), 401
+                return jsonify({
+                    "errors": "User is in the system"
+                }), 401
 
 
             username = form.username.data
