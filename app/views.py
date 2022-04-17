@@ -135,7 +135,7 @@ def setCars():
              after a succesful login so it can be used to fill in the
              user_id parameter in the function call below
             """
-            cars = Cars(description, make, model, colour, year, transmission, car_type, price, upload, user_id)
+            cars = Cars(description, make, model, colour, year, transmission, car_type, price, filename, user_id)
             db.session.add(cars)
             db.session.commit()
             ##
