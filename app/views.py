@@ -110,6 +110,75 @@ def login():
     return jsonify(errors=form_errors(form)), 401
 
 
+@app.route('/api/cars', methods=['POST'])
+def setCars():
+    form = AddNewCarForm()
+    try:
+        if request.method == "POST" and form.validate_on_submit():
+            
+            ##adds information from the form to the databse
+            make = form.make.data
+            model = form.model.data
+            colour = form.colour.data
+            year = form.year.data
+            price = form.price.data
+            car_type = form.cartype.data
+            transmission = form.transmission.data
+            description = form.description.data
+            upload = form.photo.data
+            filename = secure_filename(upload.filename)
+
+            """
+             Note! not sure if i should save the user id in a session 
+             after a succesful login so it can be used to fill in the
+             user_id parameter in the function call below
+            """
+            cars = Cars(description, make, model, colour, year, transmission, car_type, price, upload, user_id)
+            db.session.add(cars)
+            db.session.commit()
+            ##
+            
+            # Sends photo file name to upload folder
+            upload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    
+            return jsonify({
+                   "description": description,
+                   "year": year,
+                   "make": make,
+                   "model": model,
+                   "colour": colour,
+                   "transmission": transmission,
+                   "type": car_type,
+                   "price": price,
+                   "photo": filename,
+                   "user_id": 1
+               }), 201
+    except:
+        return jsonify({ "errors": "Request Failed"}), 500
+
+
+@app.route('/api/cars/{car_id}/favourite', methods=['Post'])
+def favCar(car_id):
+    try:
+       if request.method == 'Post':
+           #Searches car db to find a car that matches the id in the parameter 
+           match = Cars.query.filter_by(id=car_id).first()
+           #Adds the matched car's id and user id to favourites db
+           favourite = Favourites(match.id, match.user_id)
+           db.session.add(favourite)
+           db.session.commit()
+   
+           return jsonify({
+                   "message": "Car Succesfully Favourited",
+                   "car_id": match.id
+               })
+    except:
+        return jsonify({ "errors": "Request Failed"}), 500
+
+
+
+
+
 @app.route('/api/csrf-token', methods=['GET'])
 def get_csrf():
     return jsonify({'csrf_token': generate_csrf()})
