@@ -237,7 +237,56 @@ def favCar(car_id):
 
 
 
+###Search For Cars By Make Or Model###
+@app.route('/api/search', methods=['GET'])
+def searchCar():
+    form = ExploreForm()
+    try:
+        if request.method == 'GET':
+            cars = Cars.query.filter_by(make=form.make_ex.data, model=form.model_ex.data).all()
+            data = []
+            for car in cars:
+                data.append ({
+                    'id': car.id,
+                    'description': car.description,
+                    'make': car.make,
+                    'model': car.model,
+                    'colour': car.colour,
+                    'year': car.year,
+                    'transmission': car.transmission,
+                    'car_type': car.car_type,
+                    'price': car.price,
+                    'photo': car.photo,
+                    'user_id': car.user_id
+                })
+            return jsonify(data), 200 
+    except:
+        return jsonify({"errors": "Request Failed"}), 401
 
+###GET CARS FAVOURITED BY A USER###
+@app.route('/api/users/{user_id}/favourites', methods=['GET'])
+def userFavCar(user_id):
+    try:
+        if request.method == 'GET':
+            cars = Cars.query.filter_by(user_id=user_id).all()
+            data = []
+            for car in cars:
+                data.append ({
+                    'id': car.id,
+                    'description': car.description,
+                    'make': car.make,
+                    'model': car.model,
+                    'colour': car.colour,
+                    'year': car.year,
+                    'transmission': car.transmission,
+                    'car_type': car.car_type,
+                    'price': car.price,
+                    'photo': car.photo,
+                    'user_id': car.user_id
+                })
+            return jsonify(data), 200
+    except:
+        return jsonify({"errors": "Request Failed"}), 401
 
 @app.route('/api/csrf-token', methods=['GET'])
 def get_csrf():
