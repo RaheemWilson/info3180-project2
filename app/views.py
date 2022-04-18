@@ -190,7 +190,7 @@ def setCars():
 ##
 # GET A SPECIFIC CAR
 ##
-@app.route('api/cars/{car_id}', methods =['GET'])
+@app.route('/api/cars/{car_id}', methods =['GET'])
 def getCar(car_id):
     try:
         if request.method == 'GET':
