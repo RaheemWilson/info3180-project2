@@ -111,6 +111,35 @@ def login():
     
     return jsonify(errors=form_errors(form)), 401
 
+##
+# GET ALL CARS
+##
+@app.route('/api/cars', methods=['GET'])
+def getCars():
+    try:
+        if request.method == "GET":
+            #Retrieve data from the database
+            cars = db.session.query(Cars).all()
+            data = []
+            
+            for car in cars:
+                data.append ({
+                    'id': car.id,
+                    'description': car.description,
+                    'make': car.make,
+                    'model': car.model,
+                    'colour': car.colour,
+                    'year': car.year,
+                    'transmission': car.transmission,
+                    'type': car.car_type,
+                    'price': car.price,
+                    'photo': car.photo,
+                    'user_id': car.user_id
+                })
+            return jsonify (data=data), 200 
+    except:
+        return jsonify({"errors": "Request Failed"}), 401
+
 
 @app.route('/api/cars', methods=['POST'])
 def setCars():
@@ -157,6 +186,35 @@ def setCars():
                }), 201
     except:
         return jsonify({ "errors": "Request Failed"}), 500
+    
+##
+# GET A SPECIFIC CAR
+##
+@app.route('api/cars/{car_id}', methods =['GET'])
+def getCar(car_id):
+    try:
+        if request.method == 'GET':
+            #Searches car db to find a car that matched the id in the parameter
+            car = Cars.query.filter_by(id = car_id).first()
+            data = [{
+                'id': car.id,
+                'description': car.description,
+                'make': car.make,
+                'model': car.model,
+                'colour': car.colour,
+                'year': car.year,
+                'transmission': car.transmission,
+                'type': car.car_type,
+                'price': car.price,
+                'photo': car.photo,
+                'user_id': car.user_id
+            }]
+            return jsonify(data=data), 200
+    except:
+        return jsonify({"errors": "Request Failed"}), 401
+    
+    
+    
 
 
 @app.route('/api/cars/{car_id}/favourite', methods=['Post'])
