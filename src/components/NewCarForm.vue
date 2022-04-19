@@ -11,51 +11,92 @@
             <div class="row">
                 <div class="form-field col">
                     <label for="make">Make</label>
-                    <input type="text" name="make" id="make" v-model="make"/>
+                    <input 
+                        type="text" 
+                        name="make" 
+                        id="make" 
+                        v-model="make"
+                        required
+                    />
                 </div>
                 <div class="form-field col">
                     <label for="model">Model</label>
-                    <input type="text" name="model" id="model" v-model="model" />
+                    <input 
+                        type="text" 
+                        name="model" 
+                        id="model" 
+                        v-model="model" 
+                        required
+                    />
                 </div>
             </div>
             <div class="row">
                 <div class="form-field col">
                     <label for="colour">Colour</label>
-                    <input type="text" name="colour" id="colour" v-model="colour"/>
+                    <input 
+                        type="text" 
+                        name="colour" 
+                        id="colour" 
+                        v-model="colour"
+                        required
+                    />
                 </div>
                 <div class="form-field col">
                     <label for="year">Year</label>
-                    <input type="text" name="year" id="year" v-model="year"/>
+                    <input type="text" name="year" id="year" v-model="year" required/>
                 </div>
             </div>
             <div class="row">
                 <div class="form-field col">
                     <label for="price">Price</label>
-                    <input type="number" min="1" step="any" name="price" id="price" v-model="price"/>
+                    <input 
+                        type="number" 
+                        min="1" 
+                        step="any" 
+                        name="price" 
+                        id="price" 
+                        v-model="price"
+                        required
+                    />
                 </div>
                 <div class="form-field col">
                     <label for="car_type">Car Type</label>
-                    <select  name="car_type" id="car_type" v-model="car_type">
-                        <option value="suv">SUV</option>
+                    <select  name="car_type" id="car_type" v-model="car_type" required>
+                        <option value="SUV">SUV</option>
                     </select>
                 </div>
             </div>
             <div class="row">
                 <div class="form-field col">
                     <label for="transmission">Transmission</label>
-                    <select name="transmission" id="transmission" v-model="transmission">
-                        <option value="SUV">SUV</option>
+                    <select name="transmission" id="transmission" v-model="transmission" required>
+                        <option value="Manual">Manual</option>
+                        <option value="Automatic">Automatic</option>
                     </select>
                 </div>
                 <div class="col"></div>
             </div>
             <div class="form-field">
                 <label for="description">Description</label>
-                <textarea name="description" id="description" v-model="description" cols="30" rows="10"></textarea>
+                <textarea 
+                    name="description" 
+                    id="description" 
+                    v-model="description" 
+                    cols="30" 
+                    rows="10"
+                    required
+                ></textarea>
             </div>
             <div class="form-field">
                 <label for="photo">Upload photo</label>
-                <input type="file" name="photo" id="photo" ref="photo" @change="handleFileUpload"/>
+                <input 
+                    type="file" 
+                    name="photo" 
+                    id="photo" 
+                    ref="photo" 
+                    @change="handleFileUpload"
+                    required
+                />
             </div>
 
             <button type="submit" class="submit-btn">Add New Car</button>

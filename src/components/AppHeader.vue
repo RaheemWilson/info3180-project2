@@ -18,7 +18,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent" >
-          <ul class="navbar-nav me-auto" v-if="currentUser">
+          <ul class="navbar-nav ms-auto" v-if="currentUser">
             <li class="nav-item">
               <RouterLink to="/cars/new" class="nav-link">Add Car</RouterLink>
             </li>
@@ -28,7 +28,7 @@
             <li class="nav-item">
               <RouterLink class="nav-link" to="/users/">My Profile</RouterLink>
             </li>
-            <li class="nav-item">
+            <li class="nav-item mr-auto">
               <RouterLink class="nav-link" to="/logout">Logout</RouterLink>
             </li>
           </ul>

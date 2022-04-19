@@ -11,5 +11,15 @@ export default{
         })
 
         return res.json()
+    },
+    async search(make, model){
+        let res = await fetch(`/api/search?make=${make}&model=${model}`, {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer ${ store.getters.getAuth || localStorage.getItem('authToken')}`,
+            }
+        })
+
+        return res.json()
     }
 }

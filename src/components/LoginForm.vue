@@ -5,11 +5,23 @@
         <form @submit.prevent="loginUser" method="post">
             <div class="form-field">
                 <label for="username">Username</label>
-                <input type="text" name="username" id="username" v-model="username"/>
+                <input 
+                    type="text" 
+                    name="username" 
+                    id="username" 
+                    v-model="username"
+                    required
+                />
             </div>
             <div class="form-field">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password" v-model="password">
+                <input 
+                    type="password" 
+                    name="password" 
+                    id="password" 
+                    v-model="password"
+                    required
+                />
             </div>
             <button type="submit" class="submit-btn">Login</button>
         </form>
@@ -44,7 +56,7 @@ export default {
             } else {
                 store.commit('setAuth', { auth: res.token })
                 store.commit('setUser', { user: res.id })
-                
+
                 localStorage.setItem('authToken', res.token)
                 localStorage.setItem('id', res.id)
                 this.$router.push("/explore")
