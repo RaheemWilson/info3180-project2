@@ -111,6 +111,182 @@ def login():
     
     return jsonify(errors=form_errors(form)), 401
 
+##
+# GET ALL CARS
+##
+@app.route('/api/cars', methods=['GET'])
+def getCars():
+    try:
+        if request.method == "GET":
+            #Retrieve data from the database
+            cars = db.session.query(Cars).all()
+            data = []
+            
+            for car in cars:
+                data.append ({
+                    'id': car.id,
+                    'description': car.description,
+                    'make': car.make,
+                    'model': car.model,
+                    'colour': car.colour,
+                    'year': car.year,
+                    'transmission': car.transmission,
+                    'type': car.car_type,
+                    'price': car.price,
+                    'photo': car.photo,
+                    'user_id': car.user_id
+                })
+            return jsonify (data=data), 200 
+    except:
+        return jsonify({"errors": "Request Failed"}), 401
+
+
+@app.route('/api/cars', methods=['POST'])
+def setCars():
+    form = AddNewCarForm()
+    try:
+        if request.method == "POST" and form.validate_on_submit():
+            
+            ##adds information from the form to the databse
+            make = form.make.data
+            model = form.model.data
+            colour = form.colour.data
+            year = form.year.data
+            price = form.price.data
+            car_type = form.cartype.data
+            transmission = form.transmission.data
+            description = form.description.data
+            upload = form.photo.data
+            filename = secure_filename(upload.filename)
+
+            """
+             Note! not sure if i should save the user id in a session 
+             after a succesful login so it can be used to fill in the
+             user_id parameter in the function call below
+            """
+            cars = Cars(description, make, model, colour, year, transmission, car_type, price, filename, user_id)
+            db.session.add(cars)
+            db.session.commit()
+            ##
+            
+            # Sends photo file name to upload folder
+            upload.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    
+            return jsonify({
+                   "description": description,
+                   "year": year,
+                   "make": make,
+                   "model": model,
+                   "colour": colour,
+                   "transmission": transmission,
+                   "type": car_type,
+                   "price": price,
+                   "photo": filename,
+                   "user_id": 1
+               }), 201
+    except:
+        return jsonify({ "errors": "Request Failed"}), 500
+    
+##
+# GET A SPECIFIC CAR
+##
+@app.route('/api/cars/{car_id}', methods =['GET'])
+def getCar(car_id):
+    try:
+        if request.method == 'GET':
+            #Searches car db to find a car that matched the id in the parameter
+            car = Cars.query.filter_by(id = car_id).first()
+            data = [{
+                'id': car.id,
+                'description': car.description,
+                'make': car.make,
+                'model': car.model,
+                'colour': car.colour,
+                'year': car.year,
+                'transmission': car.transmission,
+                'type': car.car_type,
+                'price': car.price,
+                'photo': car.photo,
+                'user_id': car.user_id
+            }]
+            return jsonify(data=data), 200
+    except:
+        return jsonify({"errors": "Request Failed"}), 401
+    
+    
+    
+
+
+@app.route('/api/cars/{car_id}/favourite', methods=['Post'])
+def favCar(car_id):
+    try:
+       if request.method == 'Post':
+           #Searches car db to find a car that matches the id in the parameter 
+           match = Cars.query.filter_by(id=car_id).first()
+           #Adds the matched car's id and user id to favourites db
+           favourite = Favourites(match.id, match.user_id)
+           db.session.add(favourite)
+           db.session.commit()
+   
+           return jsonify({
+                   "message": "Car Succesfully Favourited",
+                   "car_id": match.id
+               })
+    except:
+        return jsonify({ "errors": "Request Failed"}), 500
+
+
+
+###Search For Cars By Make Or Model###
+@app.route('/api/search', methods=['GET'])
+def searchCar():
+    form = ExploreForm()
+    try:
+        if request.method == 'GET':
+            cars = Cars.query.filter_by(make=form.make_ex.data, model=form.model_ex.data).all()
+            data = []
+            for car in cars:
+                data.append ({
+                    'id': car.id,
+                    'description': car.description,
+                    'make': car.make,
+                    'model': car.model,
+                    'colour': car.colour,
+                    'year': car.year,
+                    'transmission': car.transmission,
+                    'car_type': car.car_type,
+                    'price': car.price,
+                    'photo': car.photo,
+                    'user_id': car.user_id
+                })
+            return jsonify(data), 200 
+    except:
+        return jsonify({"errors": "Request Failed"}), 401
+
+###GET CARS FAVOURITED BY A USER###
+@app.route('/api/users/{user_id}/favourites', methods=['GET'])
+def userFavCar(user_id):
+    try:
+        if request.method == 'GET':
+            cars = Cars.query.filter_by(user_id=user_id).all()
+            data = []
+            for car in cars:
+                data.append ({
+                    'id': car.id,
+                    'description': car.description,
+                    'make': car.make,
+                    'model': car.model,
+                    'colour': car.colour,
+                    'year': car.year,
+                    'transmission': car.transmission,
+                    'car_type': car.car_type,
+                    'price': car.price,
+                    'photo': car.photo,
+                    'user_id': car.user_id
+                })
+            return jsonify(data), 200
+    except:
+        return jsonify({"errors": "Request Failed"}), 401
 
 @app.route('/api/csrf-token', methods=['GET'])
 def get_csrf():
