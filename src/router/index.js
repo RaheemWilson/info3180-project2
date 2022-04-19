@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import NewCarView from '../views/NewCarView.vue'
 import CarDetailsView from '../views/CarDetailsView.vue'
+import ProfileView from '../views/ProfileView.vue'
 import store from '@/store/store.js'
 
 const router = createRouter({
@@ -38,6 +39,12 @@ const router = createRouter({
       path: '/cars/:id',
       name: 'cardetails',
       component: CarDetailsView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/users/:id',
+      name: 'userdetails',
+      component: ProfileView,
       meta: { requiresAuth: true }
     },
   ]

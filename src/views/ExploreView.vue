@@ -11,7 +11,6 @@
                     name="make" 
                     id="make" 
                     v-model="make"
-                    required
                 />
             </div>
             <div class="form-field col">
@@ -21,23 +20,24 @@
                     name="model" 
                     id="model" 
                     v-model="model" 
-                    required
                 />
             </div>
             <div class="col">
-              <button type="submit" class="submit-btn">Search</button>
+              <button type="submit" class="submit-btn" @click="searchCars">Search</button>
             </div>
           </div>
       </form>
     </div>
     <div class="cards-view">
       <CarCard 
-        :id="2"
-        :make="'Telsa'"
-        :model="'Model S'"
-        :photo="'../uploads/car.jpg'"
-        :price="'20,000'"
-        :year="'2022'"
+        v-for="car in cars"
+        :key="car.id"
+        :id="car.id"
+        :make="car.make"
+        :model="car.model"
+        :photo="`../uploads/${car.photo}`"
+        :price="car.price"
+        :year="car.year"
       />
     </div>
   </div>
@@ -53,17 +53,26 @@ export default {
             model: '',
             error: false,
             message: '',
+            cars: []
         }
+    },
+    async beforeMount(){
+      let res = await CarService.getAll()
+
+      if(res){
+        this.cars = [...res.data.slice(-3)]
+      } else {
+        this.error = true
+      }
     },
     methods: {
         async searchCars(){
-            let res = await CarService.search(make, model)
-            console.log(res)
-            if(res?.errors){
-                this.error = true
+            let res = await CarService.querySearch(this.make, this.model)
+            if(res){
+              this.error = false
+              this.cars = [...res]
             } else {
-                console.log(res)
-                // this.$router.push("/login")
+              this.error = true
             }
         }
     }
@@ -73,9 +82,6 @@ export default {
 <style scoped>
 
 .search-bar{
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
   width: 80%;
   margin: 0 auto;
   padding: 1rem 0;
@@ -109,5 +115,15 @@ input{
     border-radius: 5px;
     background: #0eb881;
     color: #ffffff;
+}
+
+.cards-view{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin: 4rem 0;
 }
 </style>

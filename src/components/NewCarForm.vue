@@ -61,7 +61,7 @@
                 </div>
                 <div class="form-field col">
                     <label for="car_type">Car Type</label>
-                    <select  name="car_type" id="car_type" v-model="car_type" required>
+                    <select  name="cartype" id="cartype" v-model="cartype" required>
                         <option value="SUV">SUV</option>
                     </select>
                 </div>
@@ -116,7 +116,7 @@ export default {
             colour: '',
             year: '',
             price: null,
-            car_type: '',
+            cartype: '',
             transmission: '',
             description: '',
             photo: '',
@@ -136,7 +136,7 @@ export default {
         async addNewCar(){
             let form = document.getElementById("carForm")
             let carInfo = new FormData(form)
-            carInfo.append('user_id', store.getters.getUser)
+            carInfo.append('user_id', store.getters.getUser || localStorage.getItem('id'))
 
             let res = await CarService.add(carInfo, this.csrf)
             console.log(res)

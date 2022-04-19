@@ -26,7 +26,7 @@
               <RouterLink class="nav-link" to="/explore">Explore</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink class="nav-link" to="/users/">My Profile</RouterLink>
+              <RouterLink class="nav-link" :to="`/users/${userId}`">My Profile</RouterLink>
             </li>
             <li class="nav-item mr-auto">
               <RouterLink class="nav-link" to="/logout">Logout</RouterLink>
@@ -58,6 +58,9 @@ export default {
   computed: {
     currentUser(){
       return  store.getters.getAuth !== null || localStorage.getItem("authToken")
+    },
+    userId(){
+      return store.getters.getUser || localStorage.getItem("id")
     }
   }
 }
