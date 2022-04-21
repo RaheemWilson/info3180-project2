@@ -11,7 +11,7 @@ import os
 import jwt
 from sqlalchemy import true
 from app import app, db, login_manager
-from flask import request, jsonify, session
+from flask import request, jsonify, session, send_file
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, RegistrationForm, AddNewCarForm
 from app.middleware import requires_auth
@@ -36,7 +36,7 @@ def user_loader(user_id):
 
 @app.route('/')
 def index():
-    return jsonify(message="This is the beginning of our API")
+    return send_file(os.path.join('../dist/', 'index.html'))
 
 @app.route('/api/register', methods = ['POST'])
 def register():
