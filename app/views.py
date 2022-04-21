@@ -47,7 +47,7 @@ def register():
             
             if check_username is not None or check_email is not None:
                 return jsonify({
-                    "errors": "User is in the system"
+                    "errors": ["User is in the system"]
                 }), 401
 
 
