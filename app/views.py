@@ -8,7 +8,7 @@ This file creates your application.
 import os
 import jwt
 from app import app, db, login_manager
-from flask import request, jsonify, session, send_file
+from flask import request, jsonify, session, send_file, send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, RegistrationForm, AddNewCarForm
 from app.middleware import requires_auth
@@ -359,6 +359,13 @@ def userFavCar(user_id):
 @app.route('/api/csrf-token', methods=['GET'])
 def get_csrf():
     return jsonify({'csrf_token': generate_csrf()})
+
+"""
+    ROUTE to retrieve images from upload folder
+"""
+@app.route('/uploads/<path:filename>')
+def custom_static(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 ###
 # The functions below should be applicable to all Flask apps.
