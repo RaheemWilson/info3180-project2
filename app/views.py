@@ -5,6 +5,7 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
+from crypt import methods
 import os
 import jwt
 from app import app, db, login_manager
@@ -363,9 +364,9 @@ def get_csrf():
 """
     ROUTE to retrieve images from upload folder
 """
-@app.route('/uploads/<path:filename>')
-def custom_static(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
 
 ###
 # The functions below should be applicable to all Flask apps.
