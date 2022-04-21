@@ -1,11 +1,10 @@
 <template>
   <div class="profile container">
     <!-- <div> -->
-        <div class="card">
+        <div class="card" v-if="user">
             <div class="row">
                 <div class="col-5 d-flex justify-content-center">
                     <img 
-                      v-if="user"
                       :src="`../../uploads/${user.photo}`" 
                       class="img-fluid profile-img" 
                       alt="User's profile"
@@ -74,6 +73,7 @@ export default {
     let user = await ProfileService.getUser(id)
     if(user){
       this.user = {...user}
+      console.log(user.photo)
       let favourites = await ProfileService.getFav(id)
       if(favourites){
         this.error = false

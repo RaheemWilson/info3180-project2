@@ -5,11 +5,8 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
-from crypt import methods
-import json
 import os
 import jwt
-from sqlalchemy import true
 from app import app, db, login_manager
 from flask import request, jsonify, session, send_file
 from flask_login import login_user, logout_user, current_user, login_required
@@ -36,7 +33,7 @@ def user_loader(user_id):
 
 @app.route('/')
 def index():
-    return send_file(os.path.join('../dist/', 'index.html'))
+ return send_file(os.path.join('../dist/', 'index.html'))
 
 @app.route('/api/register', methods = ['POST'])
 def register():
