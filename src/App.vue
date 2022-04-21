@@ -1,10 +1,12 @@
-<script setup>
+<script>
 import { RouterLink, RouterView } from 'vue-router'
 import AppHeader from "@/components/AppHeader.vue";
 import AppFooter from "@/components/AppFooter.vue";
 import store from '@/store/store';
 
-
+export default {
+  components: { AppHeader, AppFooter },
+  beforeMount(){
     let auth = localStorage.getItem('authToken')
     let user = localStorage.getItem('id')
 
@@ -12,8 +14,11 @@ import store from '@/store/store';
       store.commit('setAuth', { auth: auth })
       store.commit('setUser', { user: user })
       window.history.pushState({}, "/explore")
-      // this.$router.push("/explore")
+      // this.$router.push("/explore")]
+      console.log("Helllooooo")
     }
+  }
+}
 
 
 </script>

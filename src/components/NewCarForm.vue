@@ -95,6 +95,7 @@
                     name="photo" 
                     id="photo" 
                     ref="photo" 
+                    accept="image/png, image/jpg, image/jpeg"
                     @change="handleFileUpload"
                     required
                 />

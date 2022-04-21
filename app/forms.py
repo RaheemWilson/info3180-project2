@@ -18,7 +18,7 @@ class RegistrationForm(FlaskForm):
     email = EmailField('Email', validators=[InputRequired()])
     location = StringField('Location', validators=[InputRequired()])
     biography = TextAreaField('Biography', validators=[InputRequired()])
-    photo = FileField('UploadPhoto', validators=[FileRequired(), FileAllowed(['jpg','png'])])
+    photo = FileField('UploadPhoto', validators=[FileRequired(), FileAllowed(['jpg','jpeg', 'png'])])
 
 class AddNewCarForm(FlaskForm):
     #Fields for add new car form

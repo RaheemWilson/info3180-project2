@@ -1,6 +1,12 @@
 <template>
     <div class="login-form">
-        <div v-if="error" class="error">Invalid login information</div>
+        <div v-if="errors" class="alert alert-danger">
+            <ul>
+                <li v-for="error in errors" :key="errors.indexOf(error)">
+                    {{ error }}
+                </li>
+            </ul>
+        </div>
         <div class="alert alert-success" role="alert" v-if="message">{{ message }}</div>
         <form @submit.prevent="loginUser" method="post">
             <div class="form-field">
@@ -37,7 +43,7 @@ export default {
         return {
             username: '',
             password: '',
-            error: false,
+            errors: null,
             message: ''
         }
     },
@@ -51,7 +57,10 @@ export default {
             let res = await AuthService.login(userInfo, this.csrf)
 
             if(res?.errors){
-                this.error = true
+                this.errors = [...res.errors]
+                setTimeout(() => {
+                    this.errors = null
+                }, 1500);
             } else {
                 store.commit('setAuth', { auth: res.token })
                 store.commit('setUser', { user: res.id })

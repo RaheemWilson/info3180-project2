@@ -1,6 +1,12 @@
 <template>
     <div class="register-form">
-        <div v-if="error" class="error">Invalid information to create account</div>
+        <div v-if="errors" class="alert alert-danger">
+            <ul>
+                <li v-for="error in errors" :key="errors.indexOf(error)">
+                    {{ error }}
+                </li>
+            </ul>
+        </div>
         <div class="alert alert-success" role="alert" v-if="message">{{ message }}</div>
         <form 
             @submit.prevent="registerUser" 
@@ -11,37 +17,84 @@
             <div class="row">
                 <div class="form-field col">
                     <label for="username">Username</label>
-                    <input type="text" name="username" id="username" v-model="username"/>
+                    <input 
+                        type="text" 
+                        name="username" 
+                        id="username" 
+                        v-model="username"
+                        required
+                    />
                 </div>
                 <div class="form-field col">
                     <label for="password">Password</label>
-                    <input type="password" name="password" id="password" v-model="password">
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="password"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                        title="Must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters" 
+                        v-model="password"
+                        required
+                    >
                 </div>
             </div>
             <div class="row">
                 <div class="form-field col">
-                    <label for="fullname">Fullname</label>
-                    <input type="text" name="fullname" id="fullname" v-model="fullname"/>
+                    <label for="fullname">Full Name</label>
+                    <input 
+                        type="text" 
+                        name="fullname" 
+                        id="fullname" 
+                        v-model="fullname"
+                        required
+                    />
                 </div>
                 <div class="form-field col">
                     <label for="email">Email</label>
-                    <input type="email" name="email" id="email" v-model="email"/>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="email" 
+                        v-model="email"
+                        required
+                    />
                 </div>
             </div>
             <div class="row">
                 <div class="form-field col">
                     <label for="location">Location</label>
-                    <input type="text" name="location" id="location" v-model="location"/>
+                    <input 
+                        type="text" 
+                        name="location" 
+                        id="location" 
+                        v-model="location"
+                        required
+                    />
                 </div>
                 <div class="col"></div>
             </div>
             <div class="form-field">
                 <label for="biography">Biography</label>
-                <textarea name="biography" id="biography" v-model="biography" cols="30" rows="10"></textarea>
+                <textarea 
+                    name="biography" 
+                    id="biography" 
+                    v-model="biography" 
+                    cols="30" 
+                    rows="10"
+                    required
+                ></textarea>
             </div>
             <div class="form-field">
                 <label for="photo">Upload photo</label>
-                <input type="file" name="photo" id="photo" ref="photo" @change="handleFileUpload"/>
+                <input 
+                    type="file" 
+                    name="photo" 
+                    id="photo"
+                    ref="photo" 
+                    accept="image/png, image/jpg, image/jpeg"
+                    required
+                    @change="handleFileUpload"
+                />
             </div>
 
             <button type="submit" class="submit-btn">Register</button>
@@ -63,7 +116,7 @@ export default {
             location: '',
             biography: '',
             photo: '',
-            error: false,
+            errors: null,
             message: '',
             csrf: ''
         }
@@ -82,9 +135,13 @@ export default {
             let res = await AuthService.register(userInfo, this.csrf)
             console.log(res)
             if(res?.errors){
-                this.error = true
+                this.errors = [...res.errors]
+                setTimeout(() => {
+                    this.errors = null
+                }, 1500);
             } else {
                 // console.log(res)
+                this.error = null
                 this.message = "Account was successfully created"
                 setTimeout(() => {
                     this.$router.push("/login")

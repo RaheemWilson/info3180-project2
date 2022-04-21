@@ -4,7 +4,12 @@
         <div class="card">
             <div class="row">
                 <div class="col-5 d-flex justify-content-center">
-                    <img :src="`../../uploads/${user.photo}`" class="img-fluid profile-img" alt="Car image">
+                    <img 
+                      v-if="user"
+                      :src="`../../uploads/${user.photo}`" 
+                      class="img-fluid profile-img" 
+                      alt="User's profile"
+                    >
                 </div>
                 <div class="col-7">
                     <div class="card-body">
