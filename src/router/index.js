@@ -72,7 +72,6 @@ router.beforeEach((to) => {
   if (!userIsAuthenticated && requiresAuth) {
     return redirectToLogin(to);
   }
-  console.log(to)
   if(userIsAuthenticated){
     if(to.name === 'login' || to.name === 'register'){
       return { name: 'explore', replace: true }
