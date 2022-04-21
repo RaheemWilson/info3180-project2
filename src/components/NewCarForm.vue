@@ -7,6 +7,7 @@
             method="post" 
             enctype="multipart/form-data"
             id="carForm"
+            ref="carForm"
         >
             <div class="row">
                 <div class="form-field col">
@@ -106,6 +107,7 @@
 
 <script>
 import CarService from '@/services/cars.service.js'
+import AuthService from '@/services/auth.service.js'
 import TokenService from '@/services/token.service.js'
 import store from '@/store/store.js'
 export default {
@@ -142,8 +144,11 @@ export default {
             console.log(res)
             if(res?.errors){
                 this.error = true
+                AuthService.handleLogout()
             } else {
-                console.log(res)
+                this.message = "Car was successfully added!"
+                this.$refs.carForm.reset()
+                // console.log(res)
                 // this.$router.push("/login")
             }
         }

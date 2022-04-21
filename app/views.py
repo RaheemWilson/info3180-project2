@@ -5,11 +5,13 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
+from crypt import methods
 import json
 import os
 import jwt
+from sqlalchemy import true
 from app import app, db, login_manager
-from flask import request, jsonify, send_file, session
+from flask import request, jsonify, session
 from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, RegistrationForm, AddNewCarForm
 from app.middleware import requires_auth
@@ -119,6 +121,16 @@ def login():
     
     return jsonify(errors=form_errors(form)), 401
 
+@app.route('/api/auth/logout', methods=["POST"])
+@login_required
+@requires_auth
+def logout():
+    logout_user()
+
+    return jsonify({
+        "message": "Log out successful"
+    }), 200
+
 ##
 # GET ALL CARS
 ##
@@ -208,6 +220,15 @@ def getCar(car_id):
         if request.method == 'GET':
             #Searches car db to find a car that matched the id in the parameter
             car = Cars.query.get(car_id)
+
+            if car.user_id == current_user.id:
+                favourite = Favourites.query.filter_by(user_id=current_user.id, car_id=car_id).first()
+
+                if favourite is not None:
+                    is_favourited = True
+                else:
+                    is_favourited = False
+
             data = {
                 'id': car.id,
                 'description': car.description,
@@ -219,7 +240,8 @@ def getCar(car_id):
                 'car_type': car.car_type,
                 'price': car.price,
                 'photo': car.photo,
-                'user_id': car.user_id
+                'user_id': car.user_id,
+                'favourited': is_favourited
             }
             return jsonify(data), 200
     except:
@@ -316,9 +338,10 @@ def getUserDetail(user_id):
 def userFavCar(user_id):
     try:
         if request.method == 'GET':
-            cars = Cars.query.filter_by(user_id=user_id).all()
+            favs = Favourites.query.filter_by(user_id=user_id).all()
             data = []
-            for car in cars:
+            for fav in favs:
+                car = Cars.query.get(fav.car_id)
                 data.append ({
                     'id': car.id,
                     'description': car.description,

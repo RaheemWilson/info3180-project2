@@ -1,6 +1,6 @@
 <template>
     <div class="register-form">
-        <div v-if="error" class="error">Invalid register information</div>
+        <div v-if="error" class="error">Invalid information to create account</div>
         <div class="alert alert-success" role="alert" v-if="message">{{ message }}</div>
         <form 
             @submit.prevent="registerUser" 
@@ -84,8 +84,11 @@ export default {
             if(res?.errors){
                 this.error = true
             } else {
-                console.log(res)
-                this.$router.push("/login")
+                // console.log(res)
+                this.message = "Account was successfully created"
+                setTimeout(() => {
+                    this.$router.push("/login")
+                }, 1500);
             }
         }
     }

@@ -24,8 +24,13 @@
                             <div class="col">
                                 <span class="email-btn"  role="button">Email Owner</span>
                             </div>
-                            <div class="col d-flex" role="button" @click="handleAddFav(car.id)">
-                                <span class="material-icons-outlined ms-auto favourite">favorite_border</span>
+                            <div class="col">
+                                <div v-if="car.favourited" class="d-flex">
+                                    <span class="material-icons-outlined ms-auto favourited">favorite_border</span>
+                                </div>
+                                <div v-else  class="d-flex" role="button" @click="handleAddFav(car.id)">
+                                    <span class="material-icons-outlined ms-auto favourite">favorite_border</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -37,6 +42,7 @@
 
 <script>
 import CarService from '@/services/cars.service.js'
+import AuthService from '@/services/auth.service.js'
 import TokenService from '@/services/token.service.js'
 export default {
 
@@ -55,6 +61,7 @@ export default {
         this.car = {...res}
       } else {
         this.error = true
+        AuthService.handleLogout()
       }
     },
     methods: {
@@ -64,8 +71,19 @@ export default {
             let res = await CarService.addFav(id, response.csrf_token)
              if(res){
                 console.log(res)
+                await this.fetchCatchDetails()
             } else {
                 this.error = true
+                AuthService.handleLogout()
+            }
+        },
+        async fetchCatchDetails(){
+            let res = await CarService.getCar(this.$route.params.id)
+            if(res){
+                this.car = {...res}
+            } else {
+                this.error = true
+                AuthService.handleLogout()
             }
         }
     }
@@ -98,6 +116,18 @@ export default {
     border: 1px solid #b80e0e;
     border-radius: 50%;
     padding: 10px;
+}
+
+.favourited{
+    color: #fff;
+    border: 1px solid #b80e0e;
+    background-color: #b80e0e;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+.img-fluid{
+    height: 100%;
 }
 
 </style>

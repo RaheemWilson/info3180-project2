@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import NewCarView from '../views/NewCarView.vue'
 import CarDetailsView from '../views/CarDetailsView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import LogoutView from '../views/LogoutView.vue'
 import store from '@/store/store.js'
 
 const router = createRouter({
@@ -47,24 +48,35 @@ const router = createRouter({
       component: ProfileView,
       meta: { requiresAuth: true }
     },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: LogoutView,
+      meta: { requiresAuth: true }
+    }
   ]
 })
 
 const redirectToLogin = route => {
   const login = 'login';
-  if (route.name != login) {
+  if (route.name !== login) {
     return { name: login, replace: true, query: { redirectFrom: route.fullPath } };
   }
 };
 
 router.beforeEach((to) => {
   let token = store.state.auth || localStorage.getItem("authToken")
-  console.log(token)
   let userIsAuthenticated = token !== null
   const requiresAuth = to.matched.some((route) => route.meta && route.meta.requiresAuth);
 
   if (!userIsAuthenticated && requiresAuth) {
     return redirectToLogin(to);
+  }
+  console.log(to)
+  if(userIsAuthenticated){
+    if(to.name === 'login' || to.name === 'register'){
+      return { name: 'explore', replace: true }
+    }
   }
 
   return true;

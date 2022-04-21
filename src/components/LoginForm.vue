@@ -51,7 +51,6 @@ export default {
             let res = await AuthService.login(userInfo, this.csrf)
 
             if(res?.errors){
-                console.log(errors)
                 this.error = true
             } else {
                 store.commit('setAuth', { auth: res.token })

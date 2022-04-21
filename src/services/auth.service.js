@@ -1,3 +1,4 @@
+import store from '../store/store'
 export default {
     /**
      * 
@@ -27,7 +28,29 @@ export default {
         })
 
         return res.json()
+    },
+
+    async logout(csrf){
+        let res = await fetch('/api/auth/logout', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${ store.getters.getAuth || localStorage.getItem('authToken')}`,
+                'X-CSRFToken': csrf
+            },
+        })
+
+        return res.status === 200 ? res.json() : null
+    },
+
+    handleLogout(){
+        localStorage.removeItem('authToken')
+        localStorage.removeItem('id')
+        store.commit('setAuth', { auth: null })
+        store.commit('setUser', { user: null })
+        this.$router.push("/login")
     }
+
 
 
 }

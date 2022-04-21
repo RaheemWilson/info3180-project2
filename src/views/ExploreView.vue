@@ -63,6 +63,7 @@ export default {
         this.cars = [...res.data.slice(-3)]
       } else {
         this.error = true
+        AuthService.handleLogout()
       }
     },
     methods: {
@@ -71,8 +72,10 @@ export default {
             if(res){
               this.error = false
               this.cars = [...res]
+              console.log(res)
             } else {
               this.error = true
+              AuthService.handleLogout()
             }
         }
     }
@@ -82,7 +85,6 @@ export default {
 <style scoped>
 
 .search-bar{
-  width: 80%;
   margin: 0 auto;
   padding: 1rem 0;
   box-shadow: 10px 0 40px rgba(19, 19, 19, 0.1);
@@ -120,7 +122,7 @@ input{
 .cards-view{
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 2rem;
