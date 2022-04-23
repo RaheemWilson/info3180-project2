@@ -116,6 +116,10 @@ def login():
                     "message": "Login Successfully",
                     "id": user.id
                 }), 200
+        return jsonify(
+                { 
+                    "errors": ['Invalid credentials']
+                }), 401
     
     return jsonify(errors=form_errors(form)), 401
 

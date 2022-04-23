@@ -58,9 +58,9 @@ export default {
 
             if(res?.errors){
                 this.errors = [...res.errors]
-                setTimeout(() => {
-                    this.errors = null
-                }, 1500);
+                // setTimeout(() => {
+                //     this.errors = null
+                // }, 2000);
             } else {
                 store.commit('setAuth', { auth: res.token })
                 store.commit('setUser', { user: res.id })
@@ -103,5 +103,13 @@ export default {
     border-radius: 5px;
     background: #0eb881;
     color: #ffffff;
+}
+
+ul, li{
+    margin: 0;
+}
+
+.alert{
+    margin-top: 1rem;
 }
 </style>

@@ -48,7 +48,8 @@ export default {
         localStorage.removeItem('id')
         store.commit('setAuth', { auth: null })
         store.commit('setUser', { user: null })
-        this.$router.push("/login")
+        window.history.pushState({}, "/login")
+        // this.$router.push("/login")
     }
 
 

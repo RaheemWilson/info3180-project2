@@ -35,17 +35,19 @@ export default {
 
 <style>
 body {
-  padding-top: 75px;
+  /* padding-top: 75px; */
   height: 100vh;
 }
 
 #app{
+  /* position: relative; */
   height: 100%;
   min-height: 100%;
 }
 
 main{
   height: 100%;
+  padding-top: 75px;
 }
 
 </style>

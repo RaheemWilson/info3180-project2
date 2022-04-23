@@ -1,6 +1,6 @@
 <template>
     <div class="car-form">
-        <div v-if="error" class="error">Invalid information</div>
+        <div v-if="error" class="error alert alert-danger">Invalid information</div>
         <div class="alert alert-success" role="alert" v-if="message">{{ message }}</div>
         <form 
             @submit.prevent="addNewCar" 
@@ -190,5 +190,9 @@ input, textarea, select{
     border-radius: 5px;
     background: #0eb881;
     color: #ffffff;
+}
+
+.alert{
+    margin-top: 1rem;
 }
 </style>

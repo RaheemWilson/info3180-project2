@@ -116,9 +116,6 @@ export default {
   gap: 2rem;
 }
 
-.card{
-  height: 40%;
-}
 
 .card > .row{
   height: 100%;
@@ -126,8 +123,8 @@ export default {
 }
 
 .profile-img{
-  width: 60%;
-  height: 60%;
+  width: 15rem;
+  height: 15rem;
   border-radius: 50%;
 }
 

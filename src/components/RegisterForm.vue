@@ -186,4 +186,12 @@ input[type="file"]{
     background: #0eb881;
     color: #ffffff;
 }
+
+ul, li{
+    margin: 0;
+}
+
+.alert{
+    margin-top: 1rem;
+}
 </style>

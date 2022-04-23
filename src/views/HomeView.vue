@@ -20,7 +20,7 @@ import { RouterLink } from "vue-router";
             </div>
           </div>
         </div>
-        <div class="col">
+        <div class="col hero-image">
           <img src="@/assets/home.jpg" alt="Car on display">
         </div>
       </div>
@@ -38,6 +38,7 @@ import { RouterLink } from "vue-router";
 .row{
   max-width: 100%;
   margin: 0;
+  height: 100%;
 }
 
 img{
@@ -50,11 +51,16 @@ img{
   padding: 0;
 }
 
+.hero-image{
+  height: 100%;
+}
+
 .info{
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .info h1{
   width: 80%;
 }
@@ -62,7 +68,6 @@ img{
 .info p{
   padding-bottom: 24px;
 }
-
 
 .hero-content{
   width: 70%;

@@ -50,11 +50,6 @@
 import { RouterLink } from "vue-router";
 import store from '@/store/store.js'
 export default {
-  // data(){
-  //   return{
-  //     auth: store.getters.getAuth !== null
-  //   }
-  // }
   computed: {
     currentUser(){
       return  store.getters.getAuth !== null || localStorage.getItem("authToken")
